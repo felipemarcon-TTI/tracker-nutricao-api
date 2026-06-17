@@ -15,9 +15,9 @@ API_KEY = os.environ.get("DASHBOARD_API_KEY", "")
 PORT = int(os.environ.get("PORT", 8000))
 
 METAS = {
-    "cal": 2253, "prot": 183.3, "carbs": 231.9, "fat": 70.7, "fibra": 17.7,
-    "ca": 1145.1, "mg": 218.5, "fe": 7.3, "k": 3199.0, "na": 885.7,
-    "vit_c": 39.9, "vit_d": 1.9, "vit_b12": 1.8, "zn": 6.6,
+    "cal": 1721, "prot": 170.9, "carbs": 146.4, "fat": 53.4, "fibra": 32.6,
+    "ca": 1000, "mg": 420, "fe": 8, "k": 3400, "na": 885.7,
+    "vit_c": 90, "vit_d": 15.0, "vit_b12": 2.4, "zn": 11,
 }
 ESCALATION_THRESHOLDS = {
     "zinco_mg": 2, "potassio_mg": 2, "vitamina_c_mg": 2,
