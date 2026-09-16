@@ -15,10 +15,10 @@ API_KEY = os.environ.get("DASHBOARD_API_KEY", "")
 PORT = int(os.environ.get("PORT", 8000))
 
 METAS = {
-    "cal": 1721, "prot": 170.9, "carbs": 146.4, "fat": 53.4, "fibra": 32.6,
+    "cal": 1902, "prot": 185.5, "carbs": 194.8, "fat": 46.5, "fibra": 25.8,
     "ca": 1000, "mg": 420, "fe": 8, "k": 3400, "na": 885.7,
     "vit_c": 90, "vit_d": 15.0, "vit_b12": 2.4, "zn": 11,
-}
+}  # Plano Alimentar 5 (vigente desde 26/08/2026)
 ESCALATION_THRESHOLDS = {
     "zinco_mg": 2, "potassio_mg": 2, "vitamina_c_mg": 2,
     "ferro_mg": 3, "magnesio_mg": 3, "calcio_mg": 3,
@@ -185,10 +185,12 @@ async def weight_history(days: int = 90, x_api_key: Optional[str] = Header(None)
     today = date.today(); start = (today - timedelta(days=days)).isoformat()
     rows = db_q("""
         SELECT bm.measurement_date as data, bm.weight_kg, bm.waist_cm,
-               (SELECT AVG(m.sodium_mg) FROM meals m
-                WHERE (m.meal_time AT TIME ZONE 'Europe/Lisbon')::date
-                      BETWEEN bm.measurement_date - INTERVAL '3 days' AND bm.measurement_date - INTERVAL '1 day'
-               ) as sodio_medio_3d
+               (SELECT AVG(t.sodio) FROM (
+                    SELECT SUM(m.sodium_mg) as sodio FROM meals m
+                    WHERE (m.meal_time AT TIME ZONE 'Europe/Lisbon')::date
+                          BETWEEN bm.measurement_date - INTERVAL '3 days' AND bm.measurement_date - INTERVAL '1 day'
+                    GROUP BY (m.meal_time AT TIME ZONE 'Europe/Lisbon')::date
+                ) t) as sodio_medio_3d
         FROM body_metrics bm
         WHERE bm.measurement_date BETWEEN %s AND %s AND bm.weight_kg IS NOT NULL
         ORDER BY bm.measurement_date
